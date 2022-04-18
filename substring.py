@@ -24,9 +24,7 @@ class Substring:
 
         p = mp.Pool(mp.cpu_count())
         inds = p.map(self.parallel_sub_helper, start_inds)
-        s = p.map(self.find_ind, inds)
-        p.close()
-        p.join()
+        p.map(self.find_ind, inds)
         return self.ind.value
         
     def parallel_sub_helper(self, i):
