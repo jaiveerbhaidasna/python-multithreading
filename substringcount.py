@@ -8,19 +8,17 @@ class Substring:
     def __init__(self, base):
         self.base = base
         self.search = ""
-        self.ind = mp.Manager().Value('i', -1)
+        self.count = mp.Manager().Value('i', 0)
     
-    def sequential_sub2(self, search):
+    def sequential_sub(self, search):
+        local_count = 0
         last_index = len(self.base) - len(search) + 1
         for i in range(0, last_index):
             sub_end = i + len(search)
             curr_sub = self.base[i:sub_end]
             if curr_sub == search:
-                return i
-        return -1
-    
-    def sequential_sub(self, search):
-        return self.base.index(search)
+                local_count += 1
+        return local_count
     
     def parallel_sub(self, search):
         last_index = len(self.base) - len(search) + 1
@@ -28,23 +26,15 @@ class Substring:
         start_inds = list(range(0, last_index))
         
         p = mp.Pool(mp.cpu_count())
-        inds = p.map_async(self.parallel_sub_helper, start_inds)  
-        p.map_async(self.find_ind, inds.get())
+        p.map_async(self.parallel_sub_helper, start_inds)  
         p.close()
         p.join()
-        return self.ind.value
+        return self.count.value
         
     def parallel_sub_helper(self, i):
         sub_end = i + len(self.search)
         if self.base[i:sub_end] == self.search:
-            return i
-        return -1
-    
-    def find_ind(self, i):
-        if i >= 0 and (self.ind.value == -1 or i < self.ind.value):
-            self.ind.value = i
-
-
+            self.count.value += 1
 
 def main():
 
@@ -54,17 +44,17 @@ def main():
     s = Substring(base)
 
     start = timeit.default_timer()
-    s_index = s.sequential_sub2("hysbsuna")
-    end = timeit.default_timer()
-    print("Sequential Substring index:", s_index)
-    print("Sequential time:", end - start)
-
-    start = timeit.default_timer()
     p_index = s.parallel_sub("hysbsuna")
     end = timeit.default_timer()
-    print("Parallel Substring index:", p_index)
+    print("Parallel Substring count:", p_index)
     print("Parallel time:", end - start)
 
+    start = timeit.default_timer()
+    s_index = s.sequential_sub("hysbsuna")
+    end = timeit.default_timer()
+    print("Sequential Substring count:", s_index)
+    print("Sequential time:", end - start)
 
+    
 if __name__ == "__main__":
     main()
