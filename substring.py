@@ -54,13 +54,13 @@ def main():
     s = Substring(base)
 
     start = timeit.default_timer()
-    s_index = s.sequential_sub2("hysbsuna")
+    s_index = s.sequential_sub2("New York")
     end = timeit.default_timer()
     print("Sequential Substring index:", s_index)
     print("Sequential time:", end - start)
 
     start = timeit.default_timer()
-    p_index = s.parallel_sub("hysbsuna")
+    p_index = s.parallel_sub("New York")
     end = timeit.default_timer()
     print("Parallel Substring index:", p_index)
     print("Parallel time:", end - start)
