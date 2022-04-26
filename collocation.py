@@ -42,8 +42,8 @@ class Collocation:
                         max = self.dict[i][j]
                         max_key1 = i
                         max_key2 = j
-            temp[max_key2] = max_key1
-            result.append(temp)
+            s = max_key1 + ',' + max_key2
+            result.append(s)
             self.dict[max_key1][max_key2] = -1
         
         return result
@@ -104,6 +104,7 @@ def main():
     start = timeit.default_timer()
     par_collocation = c.par_collocation(5)
     end = timeit.default_timer()
+
     print(par_collocation)
     print("par:", end - start)
 

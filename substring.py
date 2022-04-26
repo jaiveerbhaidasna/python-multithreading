@@ -27,7 +27,7 @@ class Substring:
         self.search = search
         start_inds = list(range(0, last_index))
         
-        p = mp.Pool(mp.cpu_count())
+        p = mp.Pool(2)
         inds = p.map_async(self.parallel_sub_helper, start_inds)  
         p.map_async(self.find_ind, inds.get())
         p.close()
