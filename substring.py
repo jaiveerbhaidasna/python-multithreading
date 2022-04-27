@@ -22,12 +22,12 @@ class Substring:
     def sequential_sub(self, search):
         return self.base.index(search)
     
-    def parallel_sub(self, search):
+    def parallel_sub(self, search, num_threads):
         last_index = len(self.base) - len(search) + 1
         self.search = search
         start_inds = list(range(0, last_index))
         
-        p = mp.Pool(2)
+        p = mp.Pool(num_threads)
         inds = p.map_async(self.parallel_sub_helper, start_inds)  
         p.map_async(self.find_ind, inds.get())
         p.close()
@@ -48,19 +48,19 @@ class Substring:
 
 def main():
 
-    file = open('test.txt', mode = 'r')
+    file = open('test1.txt', mode = 'r')
     base = file.read() 
 
     s = Substring(base)
 
     start = timeit.default_timer()
-    s_index = s.sequential_sub2("New York")
+    s_index = s.sequential_sub2("advanced addition absolute received")
     end = timeit.default_timer()
     print("Sequential Substring index:", s_index)
     print("Sequential time:", end - start)
 
     start = timeit.default_timer()
-    p_index = s.parallel_sub("New York")
+    p_index = s.parallel_sub("advanced addition absolute received", 2)
     end = timeit.default_timer()
     print("Parallel Substring index:", p_index)
     print("Parallel time:", end - start)

@@ -14,7 +14,7 @@ class Collocation:
         self.max_pair = mp.Manager().Value('c', "")
 
     def seq_collocate(self, num_pairs):
-        with open('test.txt', mode='r') as f:
+        with open('test1.txt', mode='r') as f:
             contents = f.read().split()
 
         self.prev_word = contents[0]
@@ -48,12 +48,12 @@ class Collocation:
         
         return result
 
-    def par_collocation(self, num_pairs):
+    def par_collocation(self, num_pairs, num_threads):
         with open('test.txt', mode='r') as f:
             self.contents = f.read().split()
         
         start_inds = list(range(1, len(self.contents)))
-        p = mp.Pool(mp.cpu_count())
+        p = mp.Pool(num_threads)
         pair_list = p.map(self.helper1, start_inds)
         p.map(self.helper2, pair_list)
         
@@ -98,15 +98,15 @@ def main():
     start = timeit.default_timer()
     seq_collocation = c.seq_collocate(5)
     end = timeit.default_timer()
-    print(seq_collocation)
-    print("seq:", end - start)
+    print("Top pairs sequential: ", seq_collocation)
+    print("Sequential runtime:", end - start)
 
     start = timeit.default_timer()
-    par_collocation = c.par_collocation(5)
+    par_collocation = c.par_collocation(5, 2)
     end = timeit.default_timer()
 
-    print(par_collocation)
-    print("par:", end - start)
+    print("Top pairs parallel: ", par_collocation)
+    print("Parallel runtime:", end - start)
 
 if __name__ == "__main__":
     main()

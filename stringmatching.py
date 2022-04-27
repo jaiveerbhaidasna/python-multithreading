@@ -34,26 +34,36 @@ class StringMatch:
         return self.C[self.l1 - 1][self.l2 - 1]
     
     def par_compute(self, num_processes):
-        start_inds1 = list(range(0, len(self.word1)))
-        #start_inds2 = list(range(1, len(self.word2) + 1))
+        start_inds = list(range(0, len(self.word1)))
         p = mp.Pool(num_processes)
-        p.map(self.compare_strings, start_inds1)
+        p.map(self.compare_strings, start_inds)
         return self.diff_count.value
+        
 
     def compare_strings(self, i):
-        if self.word1[i] != self.word2[i]:
+        if i >= len(self.word2):
+            self.diff_count.value += 1
+        elif i == len(self.word1) - 1 and i < len(self.word2):
+            self.diff_count.value += len(self.word2) - i - 1
+            if self.word1[i] != self.word2[i]:
+                self.diff_count.value += 1
+        elif self.word1[i] != self.word2[i]:
             self.diff_count.value += 1
 
 
 def main():
-    s = StringMatch("abd", "dbb")
+
+    file = open('test2.txt', mode = 'r')
+    words = file.read().split()
+
+    s = StringMatch(words[0], words[1])
     start = timeit.default_timer()
     s.setup()
     k = s.dp_compute()
     end = timeit.default_timer()
     print("Sequential k-value:", k)
     print("DP time:", end - start)
-    
+        
     start = timeit.default_timer()
     k = s.par_compute(2)
     end = timeit.default_timer()
